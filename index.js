@@ -23,14 +23,16 @@ app.use(
   })
 );
 
+// import in routes
+const landingRoutes = require('./routes/landing');
+
+
 async function main() {
-    app.get('/', (req,res)=>{
-        res.send("It's alive!")
-    })
+  app.use('/', landingRoutes);
 }
 
 main();
 
 app.listen(3000, () => {
-  console.log("Server has started");
+  console.log("Server has started on http://localhost:3000/");
 });
