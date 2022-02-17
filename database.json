@@ -1,8 +1,9 @@
+//everything here must be on double-quotes
 {
     "dev": {
       "driver": "mysql",
-      "user": "JOLLY",
-      "password":"bang",
-      "database":"glorias"
+      "user": "glorias",
+      "password":"bar",
+      "database":"gloriasdelicaciesbusiness"
     }
-  }
+}
