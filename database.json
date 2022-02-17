@@ -1,4 +1,4 @@
-//everything here must be on double-quotes
+
 {
     "dev": {
       "driver": "mysql",
