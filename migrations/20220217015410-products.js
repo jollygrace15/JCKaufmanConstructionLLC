@@ -17,6 +17,8 @@ exports.setup = function(options, seedLink) {
 exports.up = function(db) {
   //first argument: name of the table
   //second argument: an object representing the columns
+
+  //Create Table using Javascript instead of Mysql syntax
   return db.createTable('products',{
     "id": { "type": 'int', "primaryKey":true, "autoIncrement":true, "unsigned": true},
     "name": { "type": 'string', "length":100, "notNull":true},
