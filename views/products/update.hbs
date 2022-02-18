@@ -1,0 +1,37 @@
+{{#extends 'base'}}
+
+{{#block 'content'}}
+<table class="table">
+    <thead>
+    <tr>
+        <th>ID</th>
+        <th>Name</th> 
+        <th>Description</th>
+        <th>Price</th>
+    </tr>
+    </thead>
+    <tbody>
+        {{#each products}}
+        <tr>
+            <td>
+                {{this.id}}
+            </td>
+            <td>
+                {{this.name}}
+            </td>
+            <td>
+                {{this.description}}
+            </td>
+            <td>
+                {{this.cost}}
+            </td>
+            <td>
+            <a href="/products/{{this.id}}/update" class="btn btn-primary btn-sm">Edit</a>
+            </td>
+        {{/each}} 
+        </tr>   
+    </tbody>
+</table>
+{{/block}}
+
+{{/extends}}
