@@ -16,7 +16,7 @@ async function getProductById(productId) {
     })
     return product
 }
-
+//working
 router.get('/products', async function (req,res) {
     let products = await Product.collection().fetch();
     //res.send(products.toJSON());
@@ -24,7 +24,7 @@ router.get('/products', async function (req,res) {
         'products': products.toJSON() // make sure to call .toJSON()
     })
 })
-
+//working
 router.get('/create', (req,res) =>{
     //res.send('Creating a new product')
     const productForm = createProductForm();
@@ -33,7 +33,7 @@ router.get('/create', (req,res) =>{
         'form': productForm.toHTML(bootstrapField)
     })
 })
-
+//working
 router.post('/create', function(req,res){
     //goal: create a new product based on the input in the form
     const productForm = createProductForm();
@@ -78,12 +78,44 @@ router.get('/:product_id/update', async (req, res) => {
     })
 })
 
+
+router.post('/:product_id/update', async (req, res) => {
+
+    // fetch the product that we want to update
+    const product = await Product.where({
+        'id': req.params.product_id
+    }).fetch({
+        require: true
+    });
+
+    // process the form
+    const productForm = createProductForm();
+    productForm.handle(req, {
+        'success': async (form) => {
+            product.set(form.data);
+            product.save();
+            res.redirect('/products');
+        },
+        'error': async (form) => {
+            res.render('products/update', {
+                'form': form.toHTML(bootstrapField),
+                'product': product.toJSON()
+            })
+        }
+    })
+})
+
+
 router.get('/:product_id/delete', async function(req, res){
-    const product = getProductById(productId)
+    const product = await getProductById(productId)
     res.render('products/delete',{
         'product': product.toJSON()
     })
 })
 
-
+router.post('/:product_id/delete', async function(req,res){
+    const product = await getProductById(req.params.product_id)
+    await product.destroy();
+    res.redirect('/products');
+})
 module.exports = router; // #3 export out the router
