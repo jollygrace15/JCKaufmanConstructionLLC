@@ -8,6 +8,7 @@
         <th>Name</th> 
         <th>Description</th>
         <th>Price</th>
+        <th>Actions</th>
     </tr>
     </thead>
     <tbody>
@@ -27,6 +28,7 @@
             </td>
             <td>
             <a href="/products/{{this.id}}/update" class="btn btn-primary btn-sm">Edit</a>
+            <a href="/products/{{this.id}}/delete" class="btn btn-danger btn-sm">Delete</a>
             </td>
         {{/each}} 
         </tr>   

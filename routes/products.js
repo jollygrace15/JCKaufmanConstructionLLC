@@ -7,16 +7,21 @@ const { Product } = require('../models')
 //import in createProductForm and bootstrapField
 const {bootstrapField, createProductForm} = require('../forms')
 
+//create a function that will get an info of a particular product ID
+async function getProductById(productId) {
+    const product =  await Product.where({
+        'id': productId
+    }).fetch({
+        'require':true
+    })
+    return product
+}
 
 router.get('/products', async function (req,res) {
     let products = await Product.collection().fetch();
     //res.send(products.toJSON());
     res.render('products/index',{
-<<<<<<< HEAD
         'products': products.toJSON() // make sure to call .toJSON()
-=======
-        'products': products
->>>>>>> 0746480567ff840d89e767a709b895df8d019538
     })
 })
 
@@ -53,13 +58,13 @@ router.post('/create', function(req,res){
 router.get('/:product_id/update', async (req, res) => {
     // retrieve the product
     const productId = req.params.product_id
-    const product = await Product.where({
-        'id': productId
-    }).
-    fetch({
-        require: true
-    });
-
+    //const product = await Product.where({
+    //    'id': productId
+    //}).
+    //fetch({
+    //    require: true
+    //});
+    const product = getProductById(productId)
     const productForm = createProductForm();
 
     // fill in the existing values
@@ -71,7 +76,14 @@ router.get('/:product_id/update', async (req, res) => {
         'form': productForm.toHTML(bootstrapField),
         'product': product.toJSON()
     })
-
 })
+
+router.get('/:product_id/delete', async function(req, res){
+    const product = getProductById(productId)
+    res.render('products/delete',{
+        'product': product.toJSON()
+    })
+})
+
 
 module.exports = router; // #3 export out the router
