@@ -12,7 +12,11 @@ router.get('/products', async function (req,res) {
     let products = await Product.collection().fetch();
     //res.send(products.toJSON());
     res.render('products/index',{
+<<<<<<< HEAD
         'products': products.toJSON() // make sure to call .toJSON()
+=======
+        'products': products
+>>>>>>> 0746480567ff840d89e767a709b895df8d019538
     })
 })
 
