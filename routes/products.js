@@ -78,7 +78,7 @@ router.post('/create', function(req,res){
 //})
 
 
-router.post('/:product_id/update', async (req, res) => {
+//router.post('/:product_id/update', async (req, res) => {
 
     // fetch the product that we want to update
     //const product = await Product.where({
@@ -87,36 +87,36 @@ router.post('/:product_id/update', async (req, res) => {
     //    require: true
     //});
 
-    const product = getProductById(productId)
+
 
     // process the form
-    const productForm = createProductForm();
-    productForm.handle(req, {
-        'success': async (form) => {
-            product.set(form.data);
-            product.save();
-            res.redirect('/products');
-        },
-        'error': async (form) => {
-            res.render('products/update', {
-                'form': form.toHTML(bootstrapField),
-                'product': product.toJSON()
-            })
-        }
-    })
-})
+ //   const productForm = createProductForm();
+ //   productForm.handle(req, {
+ //       'success': async (form) => {
+ //           product.set(form.data);
+ //           product.save();
+ //           res.redirect('/products');
+ //       },
+ //       'error': async (form) => {
+ //           res.render('products/update', {
+ //               'form': form.toHTML(bootstrapField),
+   //             'product': product.toJSON()
+     //       })
+       // }
+    //})
+//})
 
 
-router.get('/:product_id/delete', async function(req, res){
-    const product = await getProductById(productId)
-    res.render('products/delete',{
-        'product': product.toJSON()
-    })
-})
+//router.get('/:product_id/delete', async function(req, res){
+  //  const product = await getProductById(productId)
+   // res.render('products/delete',{
+    //    'product': product.toJSON()
+    //})
+//})
 
-router.post('/:product_id/delete', async function(req,res){
-    const product = await getProductById(req.params.product_id)
-    await product.destroy();
-    res.redirect('/products');
-})
+//router.post('/:product_id/delete', async function(req,res){
+  //  const product = await getProductById(req.params.product_id)
+    //await product.destroy();
+    //res.redirect('/products');
+//})
 module.exports = router; // #3 export out the router
