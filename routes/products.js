@@ -6,7 +6,10 @@ const { Product } = require('../models')
 
 router.get('/products', async function (req,res) {
     let products = await Product.collection().fetch();
-    res.send(products.toJSON());
+    //res.send(products.toJSON());
+    res.render('products/index',{
+        'products': products
+    })
 })
 
 router.get('/create', (req,res) =>{
