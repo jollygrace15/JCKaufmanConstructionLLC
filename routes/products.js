@@ -8,14 +8,14 @@ const { Product } = require('../models')
 const {bootstrapField, createProductForm} = require('../forms');
 
 //create a function that will get an info of a particular product ID
-//async function getProductById(productId) {
-//    const product =  await Product.where({
-//        'id': productId
-//    }).fetch({
-//        'require':true
-//    })
+async function getProductById(productId) {
+    const product =  await Product.where({
+        'id': productId
+    }).fetch({
+        'require':true
+    })
     //return product
-//}
+}
 //working
 router.get('/products', async function (req,res) {
     let products = await Product.collection().fetch();
@@ -55,27 +55,27 @@ router.post('/create', function(req,res){
     })
 })
 
-//router.get('/:product_id/update', async function(req, res){
-    // retrieve the product
-  //  const productId = req.params.product_id;
+router.get('/:product_id/update', async function(req, res){
+    //retrieve the product
+    const productId = req.params.product_id;
     //const product = await Product.where({
-    //    'id': productId
-    //}).fetch({
-    //    'require': true
+     //   'id': productId
+     //    }).fetch({
+     //   'require': true
     //})
-    //const product = getProductById(productId)
-    //const productForm = createProductForm();
-    //res.send(product.toJSON());
+    const product = getProductById(productId)
+    const productForm = createProductForm();
+    res.send(product.toJSON());
     // fill in the existing values
-    //productForm.fields.name.value = product.get('name');
-    //productForm.fields.cost.value = product.get('cost');
-    //productForm.fields.description.value = product.get('description');
+    productForm.fields.name.value = product.get('name');
+    productForm.fields.cost.value = product.get('cost');
+    productForm.fields.description.value = product.get('description');
 
-    //res.render('products/update', {
-    //    'form': productForm.toHTML(bootstrapField),
-    //    'product': product.toJSON()
-    //})
-//})
+    res.render('products/update', {
+        'form': productForm.toHTML(bootstrapField),
+        'product': product.toJSON()
+    })
+})
 
 
 //router.post('/:product_id/update', async (req, res) => {
@@ -119,4 +119,4 @@ router.post('/create', function(req,res){
     //await product.destroy();
     //res.redirect('/products');
 //})
-module.exports = router; // #3 export out the router
+module.exports = router;
