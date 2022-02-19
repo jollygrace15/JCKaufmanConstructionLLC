@@ -57,7 +57,6 @@ router.post('/create', function(req,res){
 })
 
 
-
 router.get('/products/:product_id/update', async function(req, res){
     //retrieve the product
     const productId = req.params.product_id;
@@ -74,25 +73,28 @@ router.get('/products/:product_id/update', async function(req, res){
     productForm.fields.name.value = product.get('name');
     productForm.fields.cost.value = product.get('cost');
     productForm.fields.description.value = product.get('description');
-
+ 
     res.render('products/update', {
         'form': productForm.toHTML(bootstrapField),
         'product': product.toJSON()
-    
+   
     })
 })
 
 
-router.post('products/:product_id/update', async function(req,res){
+
+router.post('/products/:product_id/update', async function(req,res){
+    //res.send("Please wait")  
+    //const productId = req.params.product_id;
     // fetch the instance of the product that we wish to update
     const product = await Product.where({
         'id': req.params.product_id
     }).fetch({ 
         require: true
     })
-    // create the product form
+     //create the product form
     const productForm = createProductForm();
-    // pass the request into the product form
+     //pass the request into the product form
     productForm.handle(req, {
         'success':async function(form){
             // executes if the form data is all valid
@@ -112,22 +114,30 @@ router.post('products/:product_id/update', async function(req,res){
                 'form': form.toHTML(bootstrapField),
                 'product': product.toJSON()
             })
-
         }
     })
 })
 
 
-//router.get('/:product_id/delete', async function(req, res){
-  //  const product = await getProductById(productId)
-   // res.render('products/delete',{
-    //    'product': product.toJSON()
-    //})
-//})
+router.get('/products/:product_id/delete', async function(req,res){
+    //const product = await getProductById(productId)
+    // fetch the product that we want to delete
+    const product = await Product.where({
+    'id': req.params.product_id
+    }).fetch({
+    require: true
+    });
+    res.render('products/delete',{
+        'product': product.toJSON()
+    })
+})
 
-//router.post('/:product_id/delete', async function(req,res){
-  //  const product = await getProductById(req.params.product_id)
-    //await product.destroy();
-    //res.redirect('/products');
-//})
+
+
+
+router.post('/products/:product_id/delete', async function(req,res){
+    const product = await getProductById(req.params.product_id)
+    await product.destroy();
+    res.redirect('/products');
+})
 module.exports = router;
