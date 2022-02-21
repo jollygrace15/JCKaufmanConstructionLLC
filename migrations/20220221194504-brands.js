@@ -15,22 +15,23 @@ exports.setup = function(options, seedLink) {
 };
 
 exports.up = function(db) {
-  // it must be all lower case
-  // always use plura or with an s
-  return db.createTable('categories', {
-    'id': {
+  return db.createTable('brands',{
+    "id":{
       'type':'int',
-      'unsigned':true,
-      'primaryKey':true,
-      'autoIncrement':true
+      'unsigned': true,
+      'primaryKey': true,
+      'autoIncrement': true,
     },
-  // name varchar(100)
-    'name': { 'type': 'string', 'length':100},
-  })
+    "name":{
+      "type":"string",
+      "length":100,
+      "notNull":true
+    }
+  });
 };
 
 exports.down = function(db) {
-  return db.dropTable('categories');
+  return null;
 };
 
 exports._meta = {

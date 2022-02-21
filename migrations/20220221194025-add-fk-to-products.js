@@ -15,28 +15,22 @@ exports.setup = function(options, seedLink) {
 };
 
 exports.up = function(db) {
-  return db.createTable('cart_items',{
-    'id': {
-      type:'int',
-      unsigned: true,
-      primaryKey: true,
-      autoIncrement: true
-    },
-    'quantity': {
-      type:'int',
-      unsigned:true
-    },
-    'product_id': {
-      type:'int',
-      notNull:true,
-      unsigned:true,
-    },
-    'user_id': {
-      type:'int',
-      notNull:true,
-      unsigned:true
+  return db.addColumn('products', 'category_id',{
+    'type':'int',
+    'unsigned':true,
+    'notNull':true,
+    'foreignKey':{
+      'name':'product_category_fk',
+      //which table the fk is referring to
+      'table':'categories',
+      //which column the fk is referring to
+      'mapping':'id',
+      'rules':{
+        'onDelete':'cascade',
+        'onUpdate':'restrict'
+      }
     }
-  })
+  });
 };
 
 exports.down = function(db) {
