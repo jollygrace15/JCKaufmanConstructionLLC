@@ -1,10 +1,8 @@
 const express = require("express");
 const router = express.Router(); // #1 - Create a new express Router
-
+//One model, (product, category), reperesents one table in the database
 const { Product, Category, Tag } = require('../models');
 
-//One model, (product, category), reperesents one table in the category
-const { Product, Category } = require('../models')
 //  #2 Add a new route to the Express router
 
 //import in createProductForm and bootstrapField
@@ -46,9 +44,8 @@ router.get('/create', async function (req,res) {
     const allTags = await Tag.fetchAll().map(function(tag){
         return [ tag.get('id'), tag.get('name')]
     })
-    const productForm = createProductForm(allCategories, allTags);
     console.log(choices);
-    const productForm = createProductForm(choices);
+    const productForm = createProductForm(choices, allTags);
     //convert the form to bootstrap design
     res.render('products/create', {
         'form': productForm.toHTML(bootstrapField)
@@ -61,7 +58,13 @@ router.post('/create', async function(req,res){
     const allCategories = await Category.fetchAll().map((category) => {
         return [category.get('id'), category.get('name')];
     })
-    const productForm = createProductForm(allCategories);
+    const allTags = await Tag.fetchAll().map(function(tag){
+        return [ tag.get('id'), tag.get('name')]
+    })
+
+    // create an instance of the product form
+    const productForm = createProductForm(allCategories, allTags);
+
     productForm.handle(req,{
         'success':async function(form){
             console.log(form.data)
@@ -69,7 +72,16 @@ router.post('/create', async function(req,res){
             newProduct.set('name', form.data.name);
             newProduct.set('cost', form.data.cost);
             newProduct.set('description', form.data.description);
+            newProduct.set('category_id', form.data.category_id);
             await newProduct.save();
+            // create the product first, then save the tags
+           // beause we need the product to attach the tags
+           if (form.data.tags) {
+            let selectedTags = form.data.tags.split(',');
+            // attach the product with the categories
+            // which ids are in the array argument 
+            await newProduct.tags().attach(selectedTags);
+        }
             res.redirect('/products');
         },
         'error':function(form) {
@@ -93,8 +105,14 @@ router.get('/products/:product_id/update', async function(req, res){
     const allCategories = await Category.fetchAll().map((category)=>{
         return [category.get('id'), category.get('name')];
     })
+
+
+    // get all the possible tags
+    const allTags = await Tag.fetchAll().map(function(tag){
+        return [ tag.get('id'), tag.get('name')]
+    })
     //const product = getProductById(productId)
-    const productForm = createProductForm(allCategories);
+    const productForm = createProductForm(allCategories, allTags);
     //res.send("Editing " + productId)
     //res.send(product.toJSON());
     // fill in the existing values
@@ -102,6 +120,12 @@ router.get('/products/:product_id/update', async function(req, res){
     productForm.fields.cost.value = product.get('cost');
     productForm.fields.description.value = product.get('description');
     productForm.fields.category_id.value = product.get('category_id');
+
+    // get only the ids from the tags that belongs to the product
+   const selectedTags = await product.related('tags').pluck('id');
+   // set the existing tags
+   productForm.fields.tags.value = selectedTags;
+
     res.render('products/update', {
         'form': productForm.toHTML(bootstrapField),
         'product': product.toJSON()
@@ -117,19 +141,26 @@ router.post('/products/:product_id/update', async function(req,res){
     const allCategories = await Category.fetchAll().map((category)=>{
         return [category.get('id'), category.get('name')];
     })
+     // get all the tags
+     const allTags = await Tag.fetchAll().map(function(tag){
+        return [ tag.get('id'), tag.get('name')]
+    })
+
+    // create the product form
+    const productForm = createProductForm(allCategories, allTags);
 
     // fetch the instance of the product that we wish to update
     const product = await Product.where({
         'id': req.params.product_id
-    }).fetch({ 
-        require: true
+    }).fetch({
+        require: true,
+        withRelated:['tags']    
     })
-     //create the product form
-    const productForm = createProductForm(allCategories);
+
      //pass the request into the product form
     productForm.handle(req, {
         'success':async function(form){
-            product.set(form.data);
+            //product.set(form.data);
             // executes if the form data is all valid
             //product.set('name', form.data.name);
             //product.set('cost', form.data.cost);
@@ -138,7 +169,27 @@ router.post('/products/:product_id/update', async function(req,res){
             // if ALL the names of the fields matches
             // the column names in the table, we can use the following shortcut
             //product.set(form.data);
+
+            // use object destructuring to extract the tags key from `form.data`
+            // into the `tags` variable,
+            // and all the remaining keys will go into `productData`
+            let {tags, ...productData} = form.data;
+
+            product.set(productData);
             await product.save();
+
+            let tagIds = tags.split(','); // change for example '1,2,3' into [1,2,3]
+
+            // get all the existing tags inside the product
+            let existingTagIds = await product.related('tags').pluck('id');
+            console.log("existingTagIds=",existingTagIds);
+            // find all the tags to remove
+            let toRemove = existingTagIds.filter( function(id){
+                return tagIds.includes(id) === false;
+            });
+            console.log("toremove=", toRemove);
+            await product.tags().detach(toRemove);
+            await product.tags().attach(tagIds)
             res.redirect('/products');
         },
         'error':function(form) {
