@@ -31,15 +31,15 @@ router.get('/products', async function (req,res) {
 //working
 router.get('/create', async function (req,res) {
     //res.send('Creating a new product')
-    let choices = [
-        [1, "Snacks"],
-        [2, "Juices"],
-        [3, "Ulam"],
-        [4, "Dessert"]
-    ]
-    //const choices = await Category.fetchAll().map(function(category){
-    //    return [ category.get('id'), category.get('name')]
-    //})
+    //let choices = [
+    //    [1, "Snacks"],
+    //    [2, "Juices"],
+    //    [3, "Ulam"],
+    //    [4, "Dessert"]
+    //]
+    const choices = await Category.fetchAll().map(function(category){
+        return [ category.get('id'), category.get('name')]
+    })
     console.log(choices);
     const productForm = createProductForm(choices);
     //convert the form to bootstrap design
@@ -124,9 +124,10 @@ router.post('/products/:product_id/update', async function(req,res){
         'success':async function(form){
             product.set(form.data);
             // executes if the form data is all valid
-             product.set('name', form.data.name);
-             product.set('cost', form.data.cost);
-             product.set('description', form.data.description)
+            //product.set('name', form.data.name);
+            //product.set('cost', form.data.cost);
+            //product.set('description', form.data.description)
+            //product.set('category_id', form.data.category_id)
             // if ALL the names of the fields matches
             // the column names in the table, we can use the following shortcut
             //product.set(form.data);
