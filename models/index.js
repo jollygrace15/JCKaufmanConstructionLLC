@@ -17,4 +17,12 @@ const Category = bookshelf.model('Category',{ // 'Category' and the tableName: '
     }
 })
 
-module.exports = { Product, Category };
+
+// first arg is the name of the model, so the model's name is the Tag
+const Tag = bookshelf.model("Tag", {
+    'tableName':'tags',
+    products() {
+        return this.belongsToMany('Product');
+    },
+})
+module.exports = { Product, Category, Tag };

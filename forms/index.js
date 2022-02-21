@@ -31,7 +31,7 @@ var bootstrapField = function (name, object) {
 
 //};
 
-const createProductForm = function(categories){
+const createProductForm = function(categories, tags){
     console.log(categories);
     return forms.create({
         "name":fields.string({
@@ -65,6 +65,12 @@ const createProductForm = function(categories){
             },
             widget: widgets.select(),
             choices: categories
+        }),
+        "tags": fields.string({
+            'required': true,
+            'errorAfterField':true,
+            'widget': widgets.multipleSelect(),
+            'choices':tags
         })
     })
 }

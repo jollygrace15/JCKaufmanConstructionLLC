@@ -1,6 +1,8 @@
 const express = require("express");
 const router = express.Router(); // #1 - Create a new express Router
 
+const { Product, Category, Tag } = require('../models');
+
 //One model, (product, category), reperesents one table in the category
 const { Product, Category } = require('../models')
 //  #2 Add a new route to the Express router
@@ -10,13 +12,14 @@ const {bootstrapField, createProductForm} = require('../forms');
 
 //create a function that will get an info of a particular product ID
 async function getProductById(productId) {
-    const product =  await Product.where({
+    const product = await Product.where({
         'id': productId
     }).fetch({
-        'require':true
-    })
-    return product
-};
+        'require':false,
+        withRelated:['tags'] // fetch all the tags associated with the product
+    });
+    return product;
+}
 
 //working
 router.get('/products', async function (req,res) {
@@ -40,6 +43,10 @@ router.get('/create', async function (req,res) {
     const choices = await Category.fetchAll().map(function(category){
         return [ category.get('id'), category.get('name')]
     })
+    const allTags = await Tag.fetchAll().map(function(tag){
+        return [ tag.get('id'), tag.get('name')]
+    })
+    const productForm = createProductForm(allCategories, allTags);
     console.log(choices);
     const productForm = createProductForm(choices);
     //convert the form to bootstrap design
