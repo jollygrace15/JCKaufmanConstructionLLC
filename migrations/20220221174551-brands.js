@@ -15,7 +15,7 @@ exports.setup = function(options, seedLink) {
 };
 
 exports.up = function(db) {
-   return db.createTable('brands',{
+  return db.createTable('brands',{
     "id":{
       'type':'int',
       'unsigned': true,

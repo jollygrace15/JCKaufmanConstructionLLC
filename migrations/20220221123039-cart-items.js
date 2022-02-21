@@ -15,11 +15,28 @@ exports.setup = function(options, seedLink) {
 };
 
 exports.up = function(db) {
-  return db.addColumn('products', 'brand_id', {
-    'type':'init',
-    ''
-  }); //for bookshelf to work the column name of the fk should be the singular version
-  //of the table name, with _id at the back
+  return db.createTable('cart_items',{
+    'id': {
+      type:'int',
+      unsigned: true,
+      primaryKey: true,
+      autoIncrement: true
+    },
+    'quantity': {
+      type:'int',
+      unsigned:true
+    },
+    'product_id': {
+      type:'int',
+      notNull:true,
+      unsigned:true,
+    },
+    'user_id': {
+      type:'int',
+      notNull:true,
+      unsigned:true
+    }
+  })
 };
 
 exports.down = function(db) {
