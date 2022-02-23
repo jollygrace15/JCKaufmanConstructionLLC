@@ -24,7 +24,7 @@ router.get('/products', async function (req,res) {
     let products = await Product.collection().fetch({
         withRelated:['category', 'tags'] //added 'tag' hoping that it will appear on my display
     });
-    console.log(products.toJSON());
+    //console.log(products.toJSON());
     res.render('products/index',{
         'products': products.toJSON() // make sure to call .toJSON()
     })
@@ -60,16 +60,27 @@ router.post('/create', async (req, res) => {
     const productForm = createProductForm(choices, allTags);
     productForm.handle(req, {
         'success': async (form) => {
-            console.log("This is update: " + form.data);
-            // separate out tags from the other product data
-            // as not to cause an error when we create
-            let {tags, ...productData} = form.data;
-            const product = new Product(productData);
-            console.log("tags :" + tags + "  kkk")
-            await product.save();
-            // save the many to many relationship
-            if (tags) {
-                await product.tags().attach(tags.split(","));
+             //console.log(form.data);
+
+            // create a new instance of the Product model
+            // NOTE: an instance of a model refers to ONE row
+            // inside the table
+            const newProduct = new Product();
+            newProduct.set('name', form.data.name);
+            newProduct.set('cost', form.data.cost);
+            newProduct.set('description', form.data.description);
+            newProduct.set('category_id', form.data.category_id);          
+  
+            await newProduct.save();
+                console.log(form.data.tags)
+                //console.log(newProduct)
+           // create the product first, then save the tags
+           // beause we need the product to attach the tags
+            if (form.data.tags) {
+                let selectedTags = form.data.tags.split(',');
+                // attach the product with the categories
+                // which ids are in the array argument 
+                await newProduct.tags().attach(selectedTags);
             }
             res.redirect('/products');
         },

@@ -23,7 +23,7 @@ const Category = bookshelf.model('Category',{ // 'Category' and the tableName: '
 
 
 // first arg is the name of the model, so the model's name is the Tag
-const Tag = bookshelf.model("Tag", {
+const Tag = bookshelf.model('Tag', {
     tableName:'tags',
     products() {
         return this.belongsToMany('Product');
