@@ -47,12 +47,13 @@ app.use(function (req, res, next) {
 // import in routes
 const landingRoutes = require('./routes/landing');
 const productsRoutes = require('./routes/products');
-
+const userRoutes = require('./routes/users');
 
 
 async function main() {
   app.use('/', landingRoutes);
   app.use('/', productsRoutes);
+  app.use('/users', userRoutes);
 }
 
 main();
