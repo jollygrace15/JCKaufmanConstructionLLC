@@ -82,6 +82,7 @@ router.post('/create', async (req, res) => {
                 // which ids are in the array argument 
                 await newProduct.tags().attach(selectedTags);
             }
+            req.flash("success_messages", `New Product ${product.get('name')} has been created`)
             res.redirect('/products');
         },
         'error': async (form) => {
