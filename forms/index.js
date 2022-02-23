@@ -5,7 +5,7 @@ const fields = forms.fields;
 const validators = forms.validators; 
 const widgets = forms.widgets
 
-var bootstrapField = function (name, object) {
+const bootstrapField = function (name, object) {
     if (!Array.isArray(object.widget.classes)) { object.widget.classes = []; }
 
     if (object.widget.classes.indexOf('form-control') === -1) {
@@ -32,7 +32,7 @@ var bootstrapField = function (name, object) {
 //};
 
 const createProductForm = function(categories, tags){
-    console.log(categories);
+    console.log("Pumasok ba:" + tags);
     return forms.create({
         "name":fields.string({
             'required':true,
@@ -41,7 +41,7 @@ const createProductForm = function(categories, tags){
                 label: ['form-label']
             }
         }),
-        'cost': fields.string({
+        "cost": fields.string({
             required: true,
             errorAfterField: true,
             cssClasses: {
@@ -49,26 +49,29 @@ const createProductForm = function(categories, tags){
             },
             'validators':[validators.integer(), validators.min(1)]
         }),
-        'description': fields.string({
-            required: true,
-            errorAfterField: true,
-            cssClasses: {
+        "description": fields.string({
+            'required': true,
+            'errorAfterField': true,
+            'cssClasses': {
                 label: ['form-label']
             }
         }),
-        'category_id': fields.string({
-            label:'Category',
-            required: true,
-            errorAfterField: true,
-            cssClasses: {
+        "category_id": fields.string({
+            'label':'Category',
+            'required': true,
+            'errorAfterField': true,
+            'cssClasses': {
                 label: ['form-label']
             },
-            widget: widgets.select(),
-            choices: categories
+            'widget': widgets.select(),
+            'choices': categories
         }),
         "tags": fields.string({
             'required': true,
-            'errorAfterField':true,
+            'errorAfterField': true,
+            'cssClasses': {
+                label: ['form-label']
+            },
             'widget': widgets.multipleSelect(),
             'choices':tags
         })

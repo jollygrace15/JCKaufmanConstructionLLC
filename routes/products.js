@@ -44,7 +44,6 @@ router.get('/create', async function (req,res) {
     const allTags = await Tag.fetchAll().map(function(tag){
         return [ tag.get('id'), tag.get('name')]
     })
-    console.log(choices);
     const productForm = createProductForm(choices, allTags);
     //convert the form to bootstrap design
     res.render('products/create', {
@@ -52,40 +51,25 @@ router.get('/create', async function (req,res) {
     })
 })
 //working
-router.post('/create', async function(req,res){
-    //goal: create a new product based on the input in the form
-     // 1. Read in all the categories
-    const allCategories = await Category.fetchAll().map((category) => {
-        return [category.get('id'), category.get('name')];
-    })
-    const allTags = await Tag.fetchAll().map(function(tag){
-        return [ tag.get('id'), tag.get('name')]
-    })
+router.post('/create', async (req, res) => {
+    const productForm = createProductForm();
+    productForm.handle(req, {
+        'success': async (form) => {
+            // separate out tags from the other product data
+            // as not to cause an error when we create
+            let {tags, ...productData} = form.data;
+            const product = new Product(productData);
+            await product.save();
+            // save the many to many relationship
+            if (tags) {
+                await product.tags().attach(tags.split(","));
+            }
 
-    // create an instance of the product form
-    const productForm = createProductForm(allCategories, allTags);
 
-    productForm.handle(req,{
-        'success':async function(form){
-            console.log(form.data)
-            const newProduct = new Product(form.data);
-            newProduct.set('name', form.data.name);
-            newProduct.set('cost', form.data.cost);
-            newProduct.set('description', form.data.description);
-            newProduct.set('category_id', form.data.category_id);
-            await newProduct.save();
-            // create the product first, then save the tags
-           // beause we need the product to attach the tags
-           if (form.data.tags) {
-            let selectedTags = form.data.tags.split(',');
-            // attach the product with the categories
-            // which ids are in the array argument 
-            await newProduct.tags().attach(selectedTags);
-        }
             res.redirect('/products');
         },
-        'error':function(form) {
-            res.render('products/create',{
+        'error': async (form) => {
+            res.render('products/create', {
                 'form': form.toHTML(bootstrapField)
             })
         }
@@ -102,17 +86,14 @@ router.get('/products/:product_id/update', async function(req, res){
         'require': true
     })
     // fetch all the categories
-    const allCategories = await Category.fetchAll().map((category)=>{
-        return [category.get('id'), category.get('name')];
+    const choices = await Category.fetchAll().map(function(category){
+        return [ category.get('id'), category.get('name')]
     })
-
-
-    // get all the possible tags
     const allTags = await Tag.fetchAll().map(function(tag){
         return [ tag.get('id'), tag.get('name')]
     })
-    //const product = getProductById(productId)
-    const productForm = createProductForm(allCategories, allTags);
+    console.log(choices + "update");
+    const productForm = createProductForm(choices, allTags);
     //res.send("Editing " + productId)
     //res.send(product.toJSON());
     // fill in the existing values
@@ -129,7 +110,6 @@ router.get('/products/:product_id/update', async function(req, res){
     res.render('products/update', {
         'form': productForm.toHTML(bootstrapField),
         'product': product.toJSON()
-   
     })
 })
 
@@ -138,22 +118,20 @@ router.get('/products/:product_id/update', async function(req, res){
 router.post('/products/:product_id/update', async function(req,res){
     //res.send("Please wait")  
     // fetch all the categories
-    const allCategories = await Category.fetchAll().map((category)=>{
-        return [category.get('id'), category.get('name')];
+    const choices = await Category.fetchAll().map(function(category){
+        return [ category.get('id'), category.get('name')]
     })
-     // get all the tags
-     const allTags = await Tag.fetchAll().map(function(tag){
+    const allTags = await Tag.fetchAll().map(function(tag){
         return [ tag.get('id'), tag.get('name')]
     })
-
-    // create the product form
-    const productForm = createProductForm(allCategories, allTags);
+    console.log(allTags + "update");
+    const productForm = createProductForm(choices, allTags);
 
     // fetch the instance of the product that we wish to update
     const product = await Product.where({
         'id': req.params.product_id
     }).fetch({
-        require: true,
+        require: false, // was true pero sa turo ay false
         withRelated:['tags']    
     })
 
@@ -182,12 +160,12 @@ router.post('/products/:product_id/update', async function(req,res){
 
             // get all the existing tags inside the product
             let existingTagIds = await product.related('tags').pluck('id');
-            console.log("existingTagIds=",existingTagIds);
+            //console.log("existingTagIds=",existingTagIds);
             // find all the tags to remove
             let toRemove = existingTagIds.filter( function(id){
                 return tagIds.includes(id) === false;
             });
-            console.log("toremove=", toRemove);
+            //console.log("toremove=", toRemove);
             await product.tags().detach(toRemove);
             await product.tags().attach(tagIds)
             res.redirect('/products');

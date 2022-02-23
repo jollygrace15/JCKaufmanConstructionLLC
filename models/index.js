@@ -16,7 +16,7 @@ const Product = bookshelf.model('Product', {
 const Category = bookshelf.model('Category',{ // 'Category' and the tableName: 'categories' must be related, only s is its difference.
     tableName: 'categories',
     products() {
-        return this.hasMany('Product', 'category_id');
+        return this.hasMany('Product');
     },
     
 })
@@ -24,7 +24,7 @@ const Category = bookshelf.model('Category',{ // 'Category' and the tableName: '
 
 // first arg is the name of the model, so the model's name is the Tag
 const Tag = bookshelf.model("Tag", {
-    'tableName':'tags',
+    tableName:'tags',
     products() {
         return this.belongsToMany('Product');
     },
