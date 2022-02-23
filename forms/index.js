@@ -32,7 +32,6 @@ const bootstrapField = function (name, object) {
 //};
 
 const createProductForm = function(categories, tags){
-    console.log("Pumasok ba:" + tags);
     return forms.create({
         "name":fields.string({
             'required':true,
