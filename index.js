@@ -27,21 +27,41 @@ app.use(
   })
 );
 
+// Register Flash middleware. The middleware always run for all routes. 
+//app.use(function (req, res, next) {
+//  res.locals.date = new Date(); // res.locals is response.locals
+//  next(); // transfers to the next middleware or if none, will pass to the routes.
+//});
+
+app.use(function(req,res,next){
+  res.locals.date = new Date();  // res.locals is response.locals
+                                 // the locals object contain the variables for the hbs file
+                                 // if we define res.lcoals.date, it means that ALL hbs files
+                                 // have access to the date variable
+  next();  // MUST call the next functiont to pass the request to next middleware, or if there
+           // is no more middlewares,pass to the route.
+})
+
+
+
 // set up sessions
-app.use(session({
-  store: new FileStore(),
-  secret: 'keyboard cat',
+app.use(session({          //a session store determines how the session data is saved
+  store: new FileStore(),  //if using a FileStore, we are saving it to a file.
+  secret: 'keyboard cat',  // used for encrypting session ids
   resave: false,
-  saveUninitialized: true
+  saveUninitialized: true  // if a request arrives with no session, create a new session
 }))
+
+
+
 
 app.use(flash())
 
-// Register Flash middleware
+// Register Flash middleware. The middleware always run for all routes. 
 app.use(function (req, res, next) {
     res.locals.success_messages = req.flash("success_messages");
     res.locals.error_messages = req.flash("error_messages");
-    next();
+    next(); // transfers to the next middleware or if none, will pass to the routes.
 });
 
 // import in routes

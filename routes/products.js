@@ -46,7 +46,8 @@ router.get('/create', async function (req,res) {
     const productForm = createProductForm(choices, allTags);
     //convert the form to bootstrap design
     res.render('products/create', {
-        'form': productForm.toHTML(bootstrapField)
+        'form': productForm.toHTML(bootstrapField),
+        'date': new Date()
     })
 })
 //working
