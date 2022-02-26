@@ -2,9 +2,9 @@
 const knex = require('knex')({
     client: 'mysql',
     connection: {
-      user: 'glorias',
+      user: 'jolly',
       password:'bar',
-      database:'gloriasdelicaciesbusiness'
+      database:'jckaufmanconstruction'
     }
   })
   const bookshelf = require('bookshelf')(knex)

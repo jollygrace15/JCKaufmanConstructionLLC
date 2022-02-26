@@ -22,8 +22,8 @@ exports.up = function(db) {
   return db.createTable('products',{
     "id": { "type": 'int', "primaryKey":true, "autoIncrement":true, "unsigned": true},
     "name": { "type": 'string', "length":100, "notNull":true},
-    "cost": 'int',
-    "description":'text',
+    "labor": 'int',
+    "description":{ "type": 'string', "length":500}
 })
 };
 

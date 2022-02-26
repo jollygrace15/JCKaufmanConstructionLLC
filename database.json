@@ -2,8 +2,8 @@
 {
     "dev": {
       "driver": "mysql",
-      "user": "glorias",
+      "user": "jolly",
       "password":"bar",
-      "database":"gloriasdelicaciesbusiness"
+      "database":"jckaufmanconstruction"
     }
 }
